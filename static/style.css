@@ -1,0 +1,53 @@
+body {
+    background: #002b3b;
+    overflow: hidden;
+}
+
+main {
+    transition: filter 2s;
+}
+
+main.loading {
+    filter: blur(10px);
+}
+
+.overlay {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    padding: 25px;
+    border-radius: 4px;
+    z-index: 100;
+}
+
+.marker {
+    position: absolute;
+    transition: all 200ms linear;
+    padding-top: 10px;
+    margin-top: -35px;
+    margin-left: -25px;
+    z-index: 10;
+}
+
+.marker i {
+    font-size: 3em;
+    position: relative;
+    color: white;
+    text-shadow: 3px 3px rgba(0, 0, 0, 0.8);
+}
+
+.storm-inner {
+    border-radius: 100%;
+    position: absolute;
+    transition: all 200ms linear;
+    box-shadow: 0 0 0 6000px rgba(128, 0, 128, 0.8);
+    border: 8px solid rgba(0, 0, 255, 0.75);
+}
+
+.map {
+    pointer-events: none;
+}
+
+.map img {
+    transition: all 200ms linear;
+}
