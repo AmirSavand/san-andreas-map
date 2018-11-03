@@ -7,7 +7,10 @@ let app = angular.module("san-andreas-map", []);
  * App config
  */
 app.config(function ($locationProvider) {
-  $locationProvider.html5Mode(true);
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  });
 });
 
 /**
@@ -229,7 +232,7 @@ app.controller("MainController", function (Map, Storm, Marker, $scope, $window, 
     /**
      * Get API URL from URL params
      */
-    let apiUrl = $location.search().api || "/static/sample.json";
+    let apiUrl = $location.search().api || "static/sample.json";
     /**
      * Get from API
      */
