@@ -4,6 +4,13 @@
 let app = angular.module("san-andreas-map", []);
 
 /**
+ * App config
+ */
+app.config(function ($locationProvider) {
+  $locationProvider.html5Mode(true);
+});
+
+/**
  * Map
  */
 app.service("Map", function ($window) {
@@ -141,11 +148,38 @@ app.service("Marker", function (Map) {
      */
     let self = this;
     /**
+     * @type {number}
+     */
+    self.id = data.id;
+    /**
+     * @type {string}
+     */
+    self.title = data.title;
+    /**
+     * @type {string}
+     */
+    self.icon = data.icon;
+    /**
+     * @type {Array<object>}
+     */
+    self.properties = data.properties;
+    /**
      * @type {object}
      */
     self.position = {
-      x: data.x,
-      y: data.y
+      x: data.position.x,
+      y: data.position.y
+    };
+    /**
+     * @type {function}
+     * @returns {string}
+     */
+    self.getContent = function () {
+      let content = "";
+      angular.forEach(self.properties, function (value, property) {
+        content += property + ": " + value + "\n";
+      });
+      return content;
     };
     /**
      * @type {function}
@@ -166,57 +200,84 @@ app.service("Marker", function (Map) {
 /**
  * Main controller
  */
-app.controller("MainController", function (Map, Storm, Marker, $scope, $window, $timeout) {
+app.controller("MainController", function (Map, Storm, Marker, $scope, $window, $timeout, $location, $http) {
   /**
-   * @type {boolean}
+   * Constructor
    */
-  $scope.loading = true;
+  function constructor() {
+    /**
+     * @type {boolean}
+     */
+    $scope.loading = true;
+    /**
+     * @type {Map}
+     */
+    $scope.map = Map;
+    /**
+     * @type {Array<Marker>}
+     */
+    $scope.markers = [];
+    /**
+     * Get markers from API
+     */
+    getMarkers();
+  }
   /**
-   * @type {Map}
+   * Get markers from API
    */
-  $scope.map = Map;
-  /**
-   * @type {Storm}
-   */
-  $scope.storm = Storm;
-  /**
-   * @type {Array<Marker>}
-   */
-  $scope.markers = [
-    new Marker({
-      x: -1500,
-      y: 500,
-    }),
-    new Marker({
-      x: 0,
-      y: 0,
-    }),
-    new Marker({
-      x: 1500,
-      y: 0,
-    }),
-    new Marker({
-      x: 100,
-      y: 250,
-    }),
-    new Marker({
-      x: 250,
-      y: -250,
-    }),
-    new Marker({
-      x: -1500,
-      y: 0,
-    }),
-  ];
+  function getMarkers() {
+    /**
+     * Get API URL from URL params
+     */
+    let apiUrl = $location.search().api || "/static/sample.json";
+    /**
+     * Get from API
+     */
+    $http.get(apiUrl).then(function (data) {
+      let res = data.data;
+      /**
+       * Load storm
+       */
+      if (res.storm) {
+        Storm.diameter = res.storm.diameter;
+        Storm.position = res.storm.position;
+        $scope.storm = Storm;
+      } else {
+        delete $scope.storm;
+      }
+      /**
+       * Load markers
+       */
+      // Remove existing popovers
+      angular.element(".popover.show").removeClass("show");
+      // Reset all markers
+      $scope.markers = [];
+      // Add all markers
+      angular.forEach(res.points, function (point) {
+        $scope.markers.push(new Marker(point));
+      });
+      /**
+       * Initial bootstrap popovers for markers
+       */
+      $timeout(function () {
+        angular.element("[data-toggle=popover]").popover({
+          placement: "top",
+          trigger: "hover",
+        });
+      });
+      /**
+       * Refresh again
+       */
+      if (res.config.interval < 3000) {
+        res.config.interval = 3000;
+      }
+      $timeout(getMarkers, res.config.interval);
+    });
+  }
   /**
    * On page load
    */
   angular.element($window).on("load", function () {
-    // Initial bootstrap popovers for markers
-    $("[data-toggle=popover]").popover({
-      placement: "top",
-      trigger: "hover",
-    });
     // On content rendered
     $timeout(function () {
       // Fully zoom out map
@@ -234,4 +295,6 @@ app.controller("MainController", function (Map, Storm, Marker, $scope, $window, 
       }, 2000);
     });
   });
+
+  constructor();
 });
