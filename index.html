@@ -36,13 +36,13 @@
         </div>
       </div>
     </div>
-    <div class="markers">
+    <div class="markers" ng-if="markers">
       <div class="marker" ng-repeat="marker in markers" style="{{ marker.getStyle() }}"
         data-toggle="popover" title="{{ marker.title }}" data-content="{{ marker.getContent() }}">
         <i class="fas fa-{{ marker.icon }}"></i>
       </div>
     </div>
-    <div class="storm">
+    <div class="storm" ng-if="storm">
       <div class="storm-inner" style="{{ storm.getStyle() }}"></div>
     </div>
     <div class="map">
