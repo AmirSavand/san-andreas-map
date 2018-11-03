@@ -1,3 +1,5 @@
+/* Global */
+
 body {
     background: #002b3b;
 }
@@ -5,6 +7,9 @@ body {
 body::-webkit-scrollbar {
     display: none;
 }
+
+
+/* Main */
 
 main {
     transition: filter 2s;
@@ -14,6 +19,9 @@ main.loading {
     filter: blur(10px);
 }
 
+
+/* Overlay */
+
 .overlay {
     position: fixed;
     bottom: 25px;
@@ -22,6 +30,9 @@ main.loading {
     border-radius: 4px;
     z-index: 100;
 }
+
+
+/* Marker */
 
 .marker {
     position: absolute;
@@ -39,6 +50,9 @@ main.loading {
     text-shadow: 3px 3px rgba(0, 0, 0, 0.8);
 }
 
+
+/* Storm */
+
 .storm-inner {
     border-radius: 100%;
     position: absolute;
@@ -47,10 +61,25 @@ main.loading {
     border: 8px solid rgba(0, 0, 255, 0.75);
 }
 
+
+/* Map */
+
 .map {
     pointer-events: none;
 }
 
 .map img {
     transition: all 200ms linear;
+}
+
+
+/* Popover */
+
+.popover-header {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.popover-body {
+    white-space: pre;
 }
